@@ -52,9 +52,9 @@ func main() {
 	for _, subreddit := range cfg.Subreddits {
 		var m shoutbot.Matcher
 		if subreddit.TitleRegex != nil {
-			m = matcher.NewRegexp(subreddit.TitleRegex)
+			m = matcher.NewTitleRegex(subreddit.TitleRegex)
 		} else {
-			m = matcher.NewEmpty()
+			m = matcher.NewDefault()
 		}
 		paths[subreddit.Name] = shoutbot.Path{
 			Sender:    sender,
