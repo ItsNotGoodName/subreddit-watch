@@ -17,5 +17,5 @@ func NewTitleRegex(title *regexp.Regexp) *TitleRegex {
 }
 
 func (tr *TitleRegex) Match(p *reddit.Post) bool {
-	return tr.regexp.Match([]byte(p.Title))
+	return tr.regexp.MatchString(p.Title)
 }

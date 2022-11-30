@@ -28,3 +28,4 @@ go.work
 
 config.yml
 dist/
+__debug_bin
