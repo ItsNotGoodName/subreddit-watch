@@ -23,6 +23,14 @@ type Config struct {
 	Subreddits []*Subreddit `mapstructure:"subreddits"`
 }
 
+func (c *Config) SubredditNameList() []string {
+	subreddits := make([]string, len(c.Subreddits))
+	for i := range c.Subreddits {
+		subreddits[i] = c.Subreddits[i].Name
+	}
+	return subreddits
+}
+
 type Subreddit struct {
 	Name                     string             `mapstructure:"name"`
 	TitleRegex               *regexp.Regexp     `mapstructure:"-"`

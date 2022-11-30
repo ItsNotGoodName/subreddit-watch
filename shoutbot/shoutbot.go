@@ -28,7 +28,7 @@ type Path struct {
 	Sender    *router.ServiceRouter
 }
 
-func NewShoutBot(paths map[string]Path) *ShoutBot {
+func New(paths map[string]Path) *ShoutBot {
 	return &ShoutBot{
 		paths: paths,
 	}

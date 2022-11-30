@@ -9,7 +9,7 @@ import (
 )
 
 const DefaultTitleTemplate string = "{{ .Post.Title }}"
-const DefaultMessageTemplate string = `{{ if .Post.IsSelf }}{{ .Post.URL }}{{ else }}https://reddit.com{{ .Post.Permalink }}
+const DefaultMessageTemplate string = `https://reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}
 {{ .Post.URL }}{{ end }}`
 
 type Data struct {
