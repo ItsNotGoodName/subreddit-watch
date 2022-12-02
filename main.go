@@ -47,27 +47,26 @@ func main() {
 	}
 
 	// Create bot
-	bcfg := reddit.BotConfig{
+	botConfig := reddit.BotConfig{
 		Agent: fmt.Sprintf("%s:%s:%s (by /u/%s)", Platform, AppID, Version, cfg.RedditUsername),
 		App: reddit.App{
 			ID:     cfg.RedditID,
 			Secret: cfg.RedditSecret,
 		},
 	}
-	bot, err := reddit.NewBot(bcfg)
+	bot, err := reddit.NewBot(botConfig)
 	if err != nil {
 		log.Fatalln("main: bot create error:", err)
 	}
 
-	runner := shoutbot.New(newPaths(cfg, sender))
+	handler := shoutbot.New(newPaths(cfg, sender))
 
 	if *argTest {
 		// Test command
-		fmt.Println("Testing")
-
 		if len(cfg.Subreddits) == 0 {
 			log.Fatalln("main: no subreddits defined")
 		}
+		fmt.Printf("Started test for '%s'\n", cfg.Subreddits[0].Name)
 
 		harvest, err := bot.ListingWithParams("/r/"+cfg.Subreddits[0].Name+"/new", map[string]string{"limit": "1"})
 		if err != nil {
@@ -78,15 +77,16 @@ func main() {
 			log.Fatalln("main: invalid posts length:", len(harvest.Posts))
 		}
 
-		if err := runner.Post(harvest.Posts[0]); err != nil {
+		if err := handler.Post(harvest.Posts[0]); err != nil {
 			log.Fatalln("main: bot post error:", err)
 		}
 	} else {
 		// Run command
-		if _, wait, err := graw.Run(runner, bot, graw.Config{Subreddits: cfg.SubredditNameList()}); err != nil {
+		subreddits := cfg.SubredditNameList()
+		if _, wait, err := graw.Run(handler, bot, graw.Config{Subreddits: subreddits}); err != nil {
 			log.Println("main: graw run error:", err)
 		} else {
-			fmt.Println("Started")
+			fmt.Println("Watching", subreddits)
 			log.Println("main: graw wait error:", wait())
 		}
 	}

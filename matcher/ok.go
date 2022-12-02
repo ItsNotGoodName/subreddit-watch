@@ -13,3 +13,7 @@ func NewDefault() *Default {
 func (Default) Match(p *reddit.Post) bool {
 	return true
 }
+
+func (Default) String() string {
+	return "ok matcher"
+}

@@ -2,7 +2,6 @@ package shoutbot
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/containrrr/shoutrrr/pkg/router"
 	"github.com/containrrr/shoutrrr/pkg/types"
@@ -16,6 +15,7 @@ type Templater interface {
 
 type Matcher interface {
 	Match(p *reddit.Post) bool
+	String() string
 }
 
 type ShoutBot struct {
@@ -35,27 +35,33 @@ func New(paths map[string]Path) *ShoutBot {
 }
 
 func (sb *ShoutBot) Post(p *reddit.Post) error {
-	fmt.Printf("%s: %s: %s\n", p.ID, p.Title, p.Permalink)
+	entry := NewLogEntry(p)
+	defer func() { fmt.Println(entry.Trace()) }()
 
 	// Get path by subreddit
 	path, ok := sb.paths[p.Subreddit]
 	if !ok {
-		log.Printf("shoutbot.Shoutbot.Post: subreddit path not found error: %s", p.Subreddit)
+		entry.Log("ERROR: invalid subreddit received: " + p.Subreddit)
 		return nil
 	}
 
 	// Check if post matches
-	if path.Matcher.Match(p); !ok {
+	if ok = path.Matcher.Match(p); !ok {
+		entry.Log("FAIL: " + path.Matcher.String())
 		return nil
 	}
+	entry.Log("PASS: " + path.Matcher.String())
 
 	// Send message to sender
 	r := types.Params{}
 	r.SetTitle(path.Templater.GetTitle(p))
 	errs := path.Sender.Send(path.Templater.GetMessage(p), &r)
 	for _, e := range errs {
-		return e
+		if e != nil {
+			return e
+		}
 	}
+	entry.Log("PASS: sent notification")
 
 	return nil
 }
