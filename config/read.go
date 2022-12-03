@@ -24,6 +24,7 @@ type RawSubreddits struct {
 	TitleRegex            []string `mapstructure:"title_regex"`
 	NotifyTitleTemplate   string   `mapstructure:"notify_title_template"`
 	NotifyMessageTemplate string   `mapstructure:"notify_message_template"`
+	Notify                []string `mapstructure:"notify"`
 }
 
 func Read(configFile string) (*Raw, error) {

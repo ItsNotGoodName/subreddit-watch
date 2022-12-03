@@ -10,8 +10,6 @@ import (
 	"github.com/ItsNotGoodName/subreddit-watch/matcher"
 	"github.com/ItsNotGoodName/subreddit-watch/shoutbot"
 	"github.com/ItsNotGoodName/subreddit-watch/templater"
-	"github.com/containrrr/shoutrrr"
-	"github.com/containrrr/shoutrrr/pkg/router"
 	"github.com/turnage/graw"
 	"github.com/turnage/graw/reddit"
 )
@@ -41,12 +39,6 @@ func main() {
 		log.Fatalln("main: config parse error:", err)
 	}
 
-	// Create sender
-	sender, err := shoutrrr.CreateSender(cfg.Notify...)
-	if err != nil {
-		log.Fatalln("main: sender create error:", err)
-	}
-
 	// Create bot
 	botConfig := reddit.BotConfig{
 		Agent: fmt.Sprintf("%s:%s:%s (by /u/%s)", Platform, AppID, Version, cfg.RedditUsername),
@@ -60,7 +52,7 @@ func main() {
 		log.Fatalln("main: bot create error:", err)
 	}
 
-	handler := shoutbot.New(newPaths(cfg, sender))
+	handler := shoutbot.New(newPaths(cfg))
 
 	if *argTest {
 		// Test command
@@ -90,7 +82,7 @@ func main() {
 	}
 }
 
-func newPaths(c *config.Config, sender *router.ServiceRouter) map[string]shoutbot.Path {
+func newPaths(c *config.Config) map[string]shoutbot.Path {
 	paths := make(map[string]shoutbot.Path)
 	for _, subreddit := range c.Subreddits {
 		matchers := []shoutbot.Matcher{}
@@ -99,7 +91,7 @@ func newPaths(c *config.Config, sender *router.ServiceRouter) map[string]shoutbo
 		}
 
 		paths[subreddit.Name] = shoutbot.Path{
-			Sender:    sender,
+			Sender:    subreddit.Notify,
 			Matchers:  matchers,
 			Templater: templater.New(subreddit.NotifyTitleTemplate, subreddit.NotifyMessageTemplate),
 		}

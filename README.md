@@ -17,7 +17,7 @@ notify_title_template: { { .Post.Title } } # Optional
 notify_message_template: | # Optional
   https://old.reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}
   {{ .Post.URL }}{{ end }}
-notify: # https://containrrr.dev/shoutrrr/v0.5/services/overview/
+notify: # Optional https://containrrr.dev/shoutrrr/v0.5/services/overview/
   - telegram://XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX@telegram?chats=-1001111111111&Preview=false
 
 # Subreddits to watch
@@ -29,6 +29,8 @@ subreddits:
     notify_message_template: | # Optional
       https://old.reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}
       {{ .Post.URL }}{{ end }}
+    notify: # Optional https://containrrr.dev/shoutrrr/v0.5/services/overview/
+      - telegram://XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX@telegram?chats=-1001111111111&Preview=false
 ```
 
 # Docker

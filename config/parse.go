@@ -3,14 +3,15 @@ package config
 import (
 	"regexp"
 	"text/template"
+
+	"github.com/containrrr/shoutrrr"
+	"github.com/containrrr/shoutrrr/pkg/router"
 )
 
 type Config struct {
 	RedditSecret   string
 	RedditID       string
 	RedditUsername string
-
-	Notify []string
 
 	Subreddits []Subreddits
 }
@@ -28,6 +29,7 @@ type Subreddits struct {
 	TitleRegex            []*regexp.Regexp
 	NotifyTitleTemplate   *template.Template
 	NotifyMessageTemplate *template.Template
+	Notify                *router.ServiceRouter
 }
 
 func Parse(raw *Raw) (*Config, error) {
@@ -37,6 +39,11 @@ func Parse(raw *Raw) (*Config, error) {
 	}
 
 	defaultNotifyMessageTemplate, err := template.New("").Parse(raw.NotifyMessageTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	defaultNotify, err := shoutrrr.CreateSender(raw.Notify...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,11 +87,22 @@ func Parse(raw *Raw) (*Config, error) {
 			}
 		}
 
+		// Notify
+		notify := defaultNotify
+		if s.Notify != nil {
+			var err error
+			notify, err = shoutrrr.CreateSender(s.Notify...)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		subreddits[i] = Subreddits{
 			Name:                  s.Name,
 			TitleRegex:            titleRegex,
 			NotifyTitleTemplate:   notifyTitleTemplate,
 			NotifyMessageTemplate: notifyMessageTemplate,
+			Notify:                notify,
 		}
 	}
 
@@ -92,7 +110,6 @@ func Parse(raw *Raw) (*Config, error) {
 		RedditSecret:   raw.RedditSecret,
 		RedditID:       raw.RedditID,
 		RedditUsername: raw.RedditUsername,
-		Notify:         raw.Notify,
 		Subreddits:     subreddits,
 	}, nil
 }
