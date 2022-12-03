@@ -15,7 +15,7 @@ reddit_secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 redit_username: XXXXXXXXXXXXXXXXXXXX # Optional
 
 # Default notifications
-notify_title_template: { { .Post.Title } } # Optional
+notify_title_template: "{{ .Post.Title }}" # Optional
 notify_message_template: | # Optional
   https://old.reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}
   {{ .Post.URL }}{{ end }}
@@ -27,7 +27,7 @@ subreddits:
   - name: buildapcsales
     title_regex: # Optional
       - (?i)^\[GPU\]
-    notify_title_template: { { .Post.Title } } # Optional
+    notify_title_template: "{{ .Post.Title }}" # Optional
     notify_message_template: | # Optional
       https://old.reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}
       {{ .Post.URL }}{{ end }}
@@ -37,7 +37,7 @@ subreddits:
 
 # Docker
 
-Configuration is loaded from `/config/subreddit-watch.yml`.
+Configuration is loaded from `/config/.subreddit-watch.yml`.
 
 ## docker-compose
 
