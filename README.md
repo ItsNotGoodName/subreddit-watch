@@ -6,6 +6,8 @@ Watch subreddits for new posts and send notifications.
 
 Configuration is loaded from `./.subreddit-watch.yml`, `~/.subreddit-watch.yml`, or `/etc/.subreddit-watch.yml`.
 
+Each template has access to the [`redit.Post`](https://pkg.go.dev/github.com/turnage/graw/reddit#Post) variable via `.Post`.
+
 ```yaml
 # Reddit API access https://www.reddit.com/prefs/apps
 reddit_id: XXXXXXXXXXXXXXXXXXXXXX
