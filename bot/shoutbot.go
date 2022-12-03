@@ -1,4 +1,4 @@
-package shoutbot
+package bot
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ type Path struct {
 	Sender    *router.ServiceRouter
 }
 
-func New(paths map[string]Path) *ShoutBot {
+func NewShoutBot(paths map[string]Path) *ShoutBot {
 	return &ShoutBot{
 		paths: paths,
 	}

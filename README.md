@@ -4,7 +4,7 @@ Watch subreddits for new posts and send notifications.
 
 # Configuration
 
-Configuration is loaded from `./config.yml`, `~/.subreddit-watch.yml`, or `/etc/subreddit-watch.yml`.
+Configuration is loaded from `./.subreddit-watch.yml`, `~/.subreddit-watch.yml`, or `/etc/.subreddit-watch.yml`.
 
 ```yaml
 # Reddit API access https://www.reddit.com/prefs/apps
@@ -35,7 +35,7 @@ subreddits:
 
 # Docker
 
-Configuration is loaded from `/config.yml`.
+Configuration is loaded from `/config/subreddit-watch.yml`.
 
 ## docker-compose
 

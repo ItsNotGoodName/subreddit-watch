@@ -1,4 +1,4 @@
-package shoutbot
+package bot
 
 import (
 	"fmt"
