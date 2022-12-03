@@ -16,12 +16,14 @@ type Raw struct {
 	NotifyMessageTemplate string   `mapstructure:"notify_message_template"`
 	Notify                []string `mapstructure:"notify"`
 
-	Subreddits []struct {
-		Name                  string   `mapstructure:"name"`
-		TitleRegex            []string `mapstructure:"title_regex"`
-		NotifyTitleTemplate   string   `mapstructure:"notify_title_template"`
-		NotifyMessageTemplate string   `mapstructure:"notify_message_template"`
-	} `mapstructure:"subreddits"`
+	Subreddits []RawSubreddits `mapstructure:"subreddits"`
+}
+
+type RawSubreddits struct {
+	Name                  string   `mapstructure:"name"`
+	TitleRegex            []string `mapstructure:"title_regex"`
+	NotifyTitleTemplate   string   `mapstructure:"notify_title_template"`
+	NotifyMessageTemplate string   `mapstructure:"notify_message_template"`
 }
 
 func Read(configFile string) (*Raw, error) {
@@ -46,6 +48,11 @@ func Read(configFile string) (*Raw, error) {
 	raw := &Raw{}
 	if err := viper.Unmarshal(raw); err != nil {
 		return nil, err
+	}
+
+	// Need atleast 1 subreddit to run
+	if raw.Subreddits == nil {
+		return nil, fmt.Errorf("no subreddits defined")
 	}
 
 	// Prevent duplicate subreddit

@@ -64,9 +64,6 @@ func main() {
 
 	if *argTest {
 		// Test command
-		if len(cfg.Subreddits) == 0 {
-			log.Fatalln("main: no subreddits defined")
-		}
 		fmt.Printf("Started test for '%s'\n", cfg.Subreddits[0].Name)
 
 		harvest, err := bot.ListingWithParams("/r/"+cfg.Subreddits[0].Name+"/new", map[string]string{"limit": "1"})
