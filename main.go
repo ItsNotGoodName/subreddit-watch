@@ -25,6 +25,7 @@ var (
 
 func main() {
 	argTest := flag.Bool("test", false, "test current configuration")
+	argConfig := flag.String("config", "", "config file")
 	argVersion := flag.Bool("version", false, "show version")
 
 	flag.Parse()
@@ -35,7 +36,7 @@ func main() {
 	}
 
 	// Parse config
-	cfg, err := config.Parse()
+	cfg, err := config.Parse(*argConfig)
 	if err != nil {
 		log.Fatalln("main: config parse error:", err)
 	}

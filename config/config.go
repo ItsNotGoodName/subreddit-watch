@@ -41,7 +41,7 @@ type Subreddit struct {
 	NotifyMessageTemplateRaw string             `mapstructure:"notify_message_template"`
 }
 
-func Parse() (*Config, error) {
+func Parse(configFile string) (*Config, error) {
 	viper.SetConfigName("config")                 // name of config file (without extension)
 	viper.SetConfigType("yaml")                   // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath("/etc/subreddit-watch/")  // path to look for the config file in
@@ -50,6 +50,9 @@ func Parse() (*Config, error) {
 	viper.SetDefault("notify_title_template", templater.DefaultTitleTemplate)
 	viper.SetDefault("notify_message_template", templater.DefaultMessageTemplate)
 	viper.RegisterAlias("subreddit", "subreddits")
+	if configFile != "" {
+		viper.SetConfigFile(configFile)
+	}
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, err
