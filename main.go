@@ -35,8 +35,8 @@ func main() {
 		return
 	}
 
-	// Parse config
-	cfg, err := config.Parse(*argConfig)
+	// Read and parse config
+	cfg, err := config.ParseAfter(config.Read(*argConfig))
 	if err != nil {
 		log.Fatalln("main: config parse error:", err)
 	}
@@ -96,15 +96,14 @@ func main() {
 func newPaths(c *config.Config, sender *router.ServiceRouter) map[string]shoutbot.Path {
 	paths := make(map[string]shoutbot.Path)
 	for _, subreddit := range c.Subreddits {
-		var m shoutbot.Matcher
-		if subreddit.TitleRegex != nil {
-			m = matcher.NewTitleRegex(subreddit.TitleRegex)
-		} else {
-			m = matcher.NewDefault()
+		matchers := []shoutbot.Matcher{}
+		for _, reg := range subreddit.TitleRegex {
+			matchers = append(matchers, matcher.NewTitleRegex(reg))
 		}
+
 		paths[subreddit.Name] = shoutbot.Path{
 			Sender:    sender,
-			Matcher:   m,
+			Matchers:  matchers,
 			Templater: templater.New(subreddit.NotifyTitleTemplate, subreddit.NotifyMessageTemplate),
 		}
 	}

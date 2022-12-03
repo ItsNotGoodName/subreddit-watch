@@ -23,7 +23,8 @@ notify: # https://containrrr.dev/shoutrrr/v0.5/services/overview/
 # Subreddits to watch
 subreddits:
   - name: buildapcsales
-    title_regex: (?i)^\[GPU\]                 # Optional
+    title_regex:                              # Optional
+      - (?i)^\[GPU\]
     notify_title_template: {{ .Post.Title }}  # Optional
     notify_message_template: |                # Optional
       https://old.reddit.com{{ .Post.Permalink }}{{ if not .Post.IsSelf }}

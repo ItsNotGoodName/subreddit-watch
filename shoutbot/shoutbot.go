@@ -23,7 +23,7 @@ type ShoutBot struct {
 }
 
 type Path struct {
-	Matcher   Matcher
+	Matchers  []Matcher
 	Templater Templater
 	Sender    *router.ServiceRouter
 }
@@ -35,22 +35,33 @@ func New(paths map[string]Path) *ShoutBot {
 }
 
 func (sb *ShoutBot) Post(p *reddit.Post) error {
-	entry := NewLogEntry(p)
+	entry := NewTraceEntry(p)
 	defer func() { fmt.Println(entry.Trace()) }()
 
 	// Get path by subreddit
 	path, ok := sb.paths[p.Subreddit]
 	if !ok {
-		entry.Log("ERROR: invalid subreddit received: " + p.Subreddit)
+		entry.Error("invalid subreddit received: " + p.Subreddit)
 		return nil
 	}
 
 	// Check if post matches
-	if ok = path.Matcher.Match(p); !ok {
-		entry.Log("FAIL: " + path.Matcher.String())
-		return nil
+	if len(path.Matchers) > 0 {
+		passed := false
+		for _, matcher := range path.Matchers {
+			if ok = matcher.Match(p); ok {
+				entry.Pass(fmt.Sprintf("matcher %d: %s", len(path.Matchers), matcher.String()))
+				passed = true
+				break
+			}
+		}
+		if !passed {
+			entry.Fail(fmt.Sprintf("%d matchers", len(path.Matchers)))
+			return nil
+		}
+	} else {
+		entry.Pass(fmt.Sprintf("%d matchers", len(path.Matchers)))
 	}
-	entry.Log("PASS: " + path.Matcher.String())
 
 	// Send message to sender
 	r := types.Params{}
@@ -58,10 +69,11 @@ func (sb *ShoutBot) Post(p *reddit.Post) error {
 	errs := path.Sender.Send(path.Templater.GetMessage(p), &r)
 	for _, e := range errs {
 		if e != nil {
-			return e
+			entry.Error("notification: " + e.Error())
+			return nil
 		}
 	}
-	entry.Log("PASS: sent notification")
+	entry.Pass("sent notification")
 
 	return nil
 }
