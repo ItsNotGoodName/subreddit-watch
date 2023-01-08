@@ -91,6 +91,7 @@ func newPaths(c *config.Config) map[string]bot.Path {
 			Sender:    subreddit.Notify,
 			Matchers:  matchers,
 			Templater: templater.New(subreddit.NotifyTitleTemplate, subreddit.NotifyMessageTemplate),
+			History:   bot.NewHistory(10),
 		}
 	}
 	return paths

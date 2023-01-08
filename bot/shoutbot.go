@@ -26,6 +26,7 @@ type Path struct {
 	Matchers  []Matcher
 	Templater Templater
 	Sender    *router.ServiceRouter
+	History   *History
 }
 
 func NewShoutBot(paths map[string]Path) *ShoutBot {
@@ -44,6 +45,13 @@ func (sb *ShoutBot) Post(p *reddit.Post) error {
 		entry.Error("invalid subreddit received: " + p.Subreddit)
 		return nil
 	}
+
+	// Check for duplicate
+	if ago := path.History.Contains(p); ago != 0 {
+		entry.Error(fmt.Sprintf("duplicate post received: %d post ago", ago))
+		return nil
+	}
+	path.History.Push(p)
 
 	// Check if post matches
 	if len(path.Matchers) > 0 {
