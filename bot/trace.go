@@ -22,10 +22,6 @@ func (te *TraceEntry) Pass(log string) {
 	te.logs = append(te.logs, "PASS: "+log)
 }
 
-func (te *TraceEntry) Fail(log string) {
-	te.logs = append(te.logs, "FAIL: "+log)
-}
-
 func (te *TraceEntry) Error(log string) {
 	te.logs = append(te.logs, "ERROR: "+log)
 }

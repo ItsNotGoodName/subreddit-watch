@@ -64,7 +64,7 @@ func (sb *ShoutBot) Post(p *reddit.Post) error {
 			}
 		}
 		if !passed {
-			entry.Fail(fmt.Sprintf("%d matchers", len(path.Matchers)))
+			entry.Error(fmt.Sprintf("%d matchers", len(path.Matchers)))
 			return nil
 		}
 	} else {
