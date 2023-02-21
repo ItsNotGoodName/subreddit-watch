@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"runtime"
+	"time"
 
 	"github.com/ItsNotGoodName/subreddit-watch/bot"
 	"github.com/ItsNotGoodName/subreddit-watch/config"
@@ -70,11 +71,16 @@ func main() {
 	} else {
 		// Run command
 		subreddits := cfg.SubredditNameList()
-		if _, wait, err := graw.Run(shoutBot, redditBot, graw.Config{Subreddits: subreddits}); err != nil {
-			log.Println("main: graw run error:", err)
-		} else {
-			fmt.Println("Watching", subreddits)
-			log.Println("main: graw wait error:", wait())
+		for {
+			if _, wait, err := graw.Run(shoutBot, redditBot, graw.Config{Subreddits: subreddits}); err != nil {
+				log.Println("main: graw run error:", err)
+			} else {
+				fmt.Println("Watching", subreddits)
+				log.Println("main: graw wait error:", wait())
+			}
+
+			fmt.Println("Received an error, restarting bot after 60 seconds")
+			time.Sleep(60 * time.Second)
 		}
 	}
 }
