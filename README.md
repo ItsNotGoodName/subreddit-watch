@@ -47,8 +47,16 @@ services:
   subreddit-watch:
     container_name: subreddit-watch
     image: ghcr.io/itsnotgoodname/subreddit-watch:latest
+    environment:
+      SUBREDDIT_WATCH_CONFIG: | # Config option 1
+        reddit_id: XXXXXXXXXXXXXXXXXXXXXX
+        reddit_secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        redit_username: XXXXXXXXXXXXXXXXXXXX
+
+        subreddits:
+          - name: buildapcsales
     volumes:
-      - /path/to/appdata/config:/config
+      - /path/to/appdata/config:/config # Config option 2
     user: 1000:1000
     restart: unless-stopped
 ```

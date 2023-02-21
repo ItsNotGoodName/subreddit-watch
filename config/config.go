@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -52,15 +53,17 @@ func InitConfig(cfgFile string) {
 		viper.SetConfigName(".subreddit-watch")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
-
 	viper.SetDefault("notify_title_template", templater.DefaultTitleTemplate)
 	viper.SetDefault("notify_message_template", templater.DefaultMessageTemplate)
 
 	viper.RegisterAlias("subreddit", "subreddits")
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err != nil {
+	if envConfig := os.Getenv("SUBREDDIT_WATCH_CONFIG"); envConfig != "" {
+		if err := viper.ReadConfig(bytes.NewBufferString(envConfig)); err != nil {
+			log.Fatalln("config.InitConfig:", err)
+		}
+	} else if err := viper.ReadInConfig(); err != nil {
 		log.Fatalln("config.InitConfig:", err)
 	}
 }
